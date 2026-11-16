@@ -1,7 +1,9 @@
 import { FiCloud, FiDroplet, FiVolume2, FiWind } from 'react-icons/fi';
 import { MdWeekend } from 'react-icons/md';
+import { useTemp } from '@/lib/preferences';
 
 export default function IndoorConditions({ data }) {
+  const { convert, unit } = useTemp();
   const stats = [
     { icon: FiDroplet, label: 'Humidity', value: `${data.humidity}%`, color: 'text-sky-500' },
     { icon: FiWind, label: 'Air Quality', value: data.airQuality, color: 'text-blue-500' },
@@ -19,8 +21,8 @@ export default function IndoorConditions({ data }) {
           </span>
           <div>
             <div className="flex items-start">
-              <span className="text-6xl font-extralight leading-none">{data.temp}</span>
-              <span className="mt-1 text-2xl font-light text-slate-500">°C</span>
+              <span className="text-6xl font-extralight leading-none">{convert(data.temp)}</span>
+              <span className="mt-1 text-2xl font-light text-slate-500">°{unit}</span>
             </div>
             <p className="mt-1 flex items-center gap-2 text-sm text-emerald-600">
               <span className="h-2 w-2 rounded-full bg-emerald-500" />

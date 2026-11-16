@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import Header from '@/components/Header';
 import Sidebar from '@/components/Sidebar';
 import { useAuth } from '@/lib/auth-context';
+import { PreferencesProvider } from '@/lib/preferences';
 
 // Client-side route guard: everything inside (app)/ requires a signed-in user.
 // Real protection is on the API, where every data endpoint checks the JWT.
@@ -24,12 +25,12 @@ export default function AppLayout({ children }) {
   }
 
   return (
-    <>
+    <PreferencesProvider>
       <Sidebar open={menuOpen} onClose={() => setMenuOpen(false)} />
       <main className="p-4 sm:p-6 lg:ml-64 lg:p-8">
         <Header onMenu={() => setMenuOpen(true)} />
         {children}
       </main>
-    </>
+    </PreferencesProvider>
   );
 }

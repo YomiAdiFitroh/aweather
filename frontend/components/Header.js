@@ -2,6 +2,7 @@
 
 import { FiBell, FiMenu } from 'react-icons/fi';
 import { useAuth } from '@/lib/auth-context';
+import Link from 'next/link';
 
 function greeting() {
   const hour = new Date().getHours();
@@ -23,9 +24,9 @@ export default function Header({ onMenu }) {
         <p className="text-sm text-slate-500">{greeting()},</p>
         <h1 className="text-2xl font-semibold leading-tight sm:text-3xl">{firstName}!</h1>
       </div>
-      <button className="card flex h-11 w-11 items-center justify-center text-lg text-slate-600" aria-label="Notifications">
+      <Link href="/alerts" className="card flex h-11 w-11 items-center justify-center text-lg text-slate-600 transition hover:text-blue-600" aria-label="Weather alerts">
         <FiBell />
-      </button>
+      </Link>
       <span className="flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-blue-700 font-semibold text-white">
         {firstName.charAt(0).toUpperCase()}
       </span>

@@ -1,10 +1,12 @@
 import { FiMapPin } from 'react-icons/fi';
+import { useTemp } from '@/lib/preferences';
 import WeatherIcon from './WeatherIcon';
 
 const dateFormat = { weekday: 'long', day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Jakarta' };
 
 export default function CurrentWeather({ data, className = '' }) {
   const { location, date, current } = data;
+  const { convert, unit } = useTemp();
 
   return (
     <section
@@ -18,12 +20,12 @@ export default function CurrentWeather({ data, className = '' }) {
       <WeatherIcon condition={current.condition} size={120} light className="absolute -right-1 top-3" />
 
       <div className="mt-8 flex items-start">
-        <span className="text-8xl font-extralight leading-none">{current.temp}</span>
-        <span className="mt-2 text-3xl font-light text-blue-100">°C</span>
+        <span className="text-8xl font-extralight leading-none">{convert(current.temp)}</span>
+        <span className="mt-2 text-3xl font-light text-blue-100">°{unit}</span>
       </div>
       <p className="mt-3 text-2xl font-light">{current.condition}</p>
       <p className="text-sm text-blue-100">
-        H: {current.high}° &nbsp; L: {current.low}°
+        H: {convert(current.high)}° &nbsp; L: {convert(current.low)}°
       </p>
 
       <div className="mt-auto pt-8">

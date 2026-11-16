@@ -1,3 +1,5 @@
+import { useTemp } from '@/lib/preferences';
+
 const W = 560;
 const H = 230;
 const PAD_X = 34;
@@ -21,6 +23,7 @@ function smoothPath(pts) {
 }
 
 export default function TemperatureChart({ hourly, className = '' }) {
+  const { convert } = useTemp();
   const temps = hourly.map((h) => h.temp);
   const min = Math.min(...temps) - 2;
   const max = Math.max(...temps) + 2;
@@ -53,7 +56,7 @@ export default function TemperatureChart({ hourly, className = '' }) {
             <g key={i}>
               <circle cx={p.x} cy={p.y} r={i === 0 ? 7 : 5} fill={i === 0 ? '#2563eb' : 'white'} stroke="#3b82f6" strokeWidth="2.5" />
               <text x={p.x} y={p.y - 14} textAnchor="middle" fontSize="15" fontWeight="600" fill="#0f172a">
-                {p.temp}°
+                {convert(p.temp)}°
               </text>
               <text x={p.x} y={H - 20} textAnchor="middle" fontSize="13" fill="#64748b">
                 {p.label}

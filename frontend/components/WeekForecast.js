@@ -1,6 +1,8 @@
+import { useTemp } from '@/lib/preferences';
 import WeatherIcon from './WeatherIcon';
 
 export default function WeekForecast({ daily }) {
+  const { convert } = useTemp();
   return (
     <section>
       <h2 className="mb-3 text-lg font-semibold">This week</h2>
@@ -22,7 +24,7 @@ export default function WeekForecast({ daily }) {
                 <p className={`text-xs ${today ? 'text-blue-100' : 'text-slate-500'}`}>{d.date}</p>
               </div>
               <p className="text-2xl font-semibold">
-                {d.max}°<span className={`ml-1 text-sm font-normal ${today ? 'text-blue-100' : 'text-slate-400'}`}>{d.min}°</span>
+                {convert(d.max)}°<span className={`ml-1 text-sm font-normal ${today ? 'text-blue-100' : 'text-slate-400'}`}>{convert(d.min)}°</span>
               </p>
             </li>
           );

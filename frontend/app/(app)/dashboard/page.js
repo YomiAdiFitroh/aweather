@@ -10,9 +10,10 @@ import SunCard from '@/components/SunCard';
 import TemperatureChart from '@/components/TemperatureChart';
 import WeekForecast from '@/components/WeekForecast';
 import { api } from '@/lib/api';
+import { usePreferences } from '@/lib/preferences';
 
 export default function DashboardPage() {
-  const [city, setCity] = useState('Jakarta');
+  const { city, setCity, ready } = usePreferences();
   const [data, setData] = useState(null);
   const [cities, setCities] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -29,6 +30,8 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
+    if (!ready) return undefined;
+
     let active = true;
     setLoading(true);
     api(`/weather/dashboard?city=${encodeURIComponent(city)}`)
@@ -42,7 +45,7 @@ export default function DashboardPage() {
     return () => {
       active = false;
     };
-  }, [city]);
+  }, [city, ready]);
 
   return (
     <>

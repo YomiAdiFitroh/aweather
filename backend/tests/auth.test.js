@@ -165,3 +165,32 @@ describe('POST /api/auth/logout', () => {
     expect(res.status).toBe(204);
   });
 });
+
+describe('POST /api/auth/logout-all', () => {
+  it('revokes every session for the user', async () => {
+    const { accessToken, cookie: deviceA } = await registerUser();
+    const loginB = await request(app).post('/api/auth/login').send({ email: validUser.email, password: validUser.password });
+    const deviceB = refreshCookie(loginB);
+
+    const res = await request(app).post('/api/auth/logout-all').set('Authorization', `Bearer ${accessToken}`);
+    expect(res.status).toBe(204);
+
+    expect((await request(app).post('/api/auth/refresh').set('Cookie', deviceA)).status).toBe(401);
+    expect((await request(app).post('/api/auth/refresh').set('Cookie', deviceB)).status).toBe(401);
+  });
+
+  it("does not touch other users' sessions", async () => {
+    const { accessToken } = await registerUser();
+    const other = await registerUser({ name: 'Other', email: 'other@example.com', password: 'password123' });
+
+    await request(app).post('/api/auth/logout-all').set('Authorization', `Bearer ${accessToken}`);
+
+    const res = await request(app).post('/api/auth/refresh').set('Cookie', other.cookie);
+    expect(res.status).toBe(200);
+  });
+
+  it('rejects a request without a token with 401', async () => {
+    const res = await request(app).post('/api/auth/logout-all');
+    expect(res.status).toBe(401);
+  });
+});

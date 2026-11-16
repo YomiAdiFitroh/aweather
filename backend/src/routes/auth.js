@@ -143,6 +143,20 @@ router.post(
   })
 );
 
+// Revokes every refresh token for the signed-in user (all devices).
+router.post(
+  '/logout-all',
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    await prisma.refreshToken.updateMany({
+      where: { userId: req.userId, revokedAt: null },
+      data: { revokedAt: new Date() },
+    });
+    clearRefreshCookie(res);
+    res.status(204).end();
+  })
+);
+
 router.get(
   '/me',
   requireAuth,

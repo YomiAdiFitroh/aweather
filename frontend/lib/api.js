@@ -9,6 +9,8 @@ export const setAccessToken = (token) => {
   accessToken = token;
 };
 
+const NO_REFRESH = ['/auth/login', '/auth/register', '/auth/refresh', '/auth/logout'];
+
 function request(path, { method = 'GET', body } = {}) {
   const headers = {};
   if (body) headers['Content-Type'] = 'application/json';
@@ -48,7 +50,7 @@ export async function api(path, options) {
   let res = await request(path, options);
 
   // Access token expired? Refresh once, then retry the original request.
-  if (res.status === 401 && !path.startsWith('/auth/')) {
+  if (res.status === 401 && !NO_REFRESH.includes(path)) {
     if (await refreshSession()) res = await request(path, options);
   }
 

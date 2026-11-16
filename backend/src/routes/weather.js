@@ -23,4 +23,11 @@ router.get(
   })
 );
 
+router.get(
+  '/alerts',
+  asyncHandler(async (req, res) => {
+    res.json({ alerts: await weather.getAlerts(), generatedAt: new Date().toISOString() });
+  })
+);
+
 module.exports = router;

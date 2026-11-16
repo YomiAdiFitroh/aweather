@@ -4,18 +4,20 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { FiBell, FiCloud, FiHome, FiLogOut, FiMap, FiMapPin, FiSettings, FiUsers, FiX } from 'react-icons/fi';
 import { useAuth } from '@/lib/auth-context';
+import { usePreferences } from '@/lib/preferences';
 
 const NAV = [
   { label: 'Dashboard', href: '/dashboard', icon: FiHome },
-  { label: 'Forecast', icon: FiCloud },
-  { label: 'Map', icon: FiMap },
-  { label: 'Cities', icon: FiMapPin },
-  { label: 'Alerts', icon: FiBell },
+  { label: 'Forecast', href: '/forecast', icon: FiCloud },
+  { label: 'Map', href: '/map', icon: FiMap },
+  { label: 'Cities', href: '/cities', icon: FiMapPin },
+  { label: 'Alerts', href: '/alerts', icon: FiBell },
   { label: 'Users', href: '/users', icon: FiUsers },
-  { label: 'Settings', icon: FiSettings },
+  { label: 'Settings', href: '/settings', icon: FiSettings },
 ];
 
-export default function Sidebar({ open, onClose, city = 'Jakarta' }) {
+export default function Sidebar({ open, onClose }) {
+  const { city } = usePreferences();
   const pathname = usePathname();
   const router = useRouter();
   const { logout } = useAuth();

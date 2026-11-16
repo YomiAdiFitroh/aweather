@@ -1,4 +1,5 @@
 import { FiCloud, FiCloudRain, FiDroplet, FiSun, FiThermometer, FiWind } from 'react-icons/fi';
+import { useTemp } from '@/lib/preferences';
 import Ring from './Ring';
 
 const tone = {
@@ -19,7 +20,7 @@ const tone = {
 };
 
 const ITEMS = [
-  { key: 'feelsLike', label: 'Feels Like', icon: FiThermometer, unit: '°C' },
+  { key: 'feelsLike', label: 'Feels Like', icon: FiThermometer, unit: '°' },
   { key: 'windKmh', label: 'Wind', icon: FiWind, unit: 'km/h' },
   { key: 'rainChance', label: 'Rain Chance', icon: FiCloudRain, unit: '%', ring: { max: 100, color: '#38bdf8' } },
   { key: 'humidity', label: 'Humidity', icon: FiDroplet, unit: '%', ring: { max: 100, color: '#3b82f6' } },
@@ -28,12 +29,16 @@ const ITEMS = [
 ];
 
 export default function Highlights({ data }) {
+  const { convert, unit: tempUnit } = useTemp();
   return (
     <section>
       <h2 className="mb-3 text-lg font-semibold">Today&apos;s Highlights</h2>
       <div className="grid grid-cols-2 gap-4 xl:grid-cols-3">
         {ITEMS.map(({ key, label, icon: Icon, unit, ring }) => {
           const { value, label: status } = data[key];
+          const isTemp = key === 'feelsLike';
+          const shown = isTemp && value != null ? convert(value) : value;
+          const suffix = isTemp ? `°${tempUnit}` : unit;
           return (
             <div key={key} className="card flex items-center justify-between gap-2 p-5">
               <div>
@@ -42,8 +47,8 @@ export default function Highlights({ data }) {
                 </p>
                 <p className={`text-xs font-medium ${tone[status] || 'text-slate-400'}`}>{status}</p>
                 <p className="mt-3 text-3xl font-semibold">
-                  {value ?? '—'}
-                  <span className="ml-1 text-sm font-normal text-slate-500">{value != null ? unit : ''}</span>
+                  {shown ?? '—'}
+                  <span className="ml-1 text-sm font-normal text-slate-500">{value != null ? suffix : ''}</span>
                 </p>
               </div>
               {ring && value != null && <Ring value={value} max={ring.max} color={ring.color} />}

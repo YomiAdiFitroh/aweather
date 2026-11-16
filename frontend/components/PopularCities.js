@@ -1,6 +1,8 @@
+import { useTemp } from '@/lib/preferences';
 import WeatherIcon from './WeatherIcon';
 
 export default function PopularCities({ cities, selected, onSelect }) {
+  const { convert, unit } = useTemp();
   return (
     <section>
       <h2 className="mb-3 text-lg font-semibold">Other Cities</h2>
@@ -19,10 +21,10 @@ export default function PopularCities({ cities, selected, onSelect }) {
             <span className="min-w-0">
               <span className="block truncate font-medium">{c.city}</span>
               <span className="block text-3xl font-light leading-tight">
-                {c.temp}°<span className="text-base text-slate-500">C</span>
+                {convert(c.temp)}°<span className="text-base text-slate-500">{unit}</span>
               </span>
               <span className="block text-xs text-slate-500">
-                {c.condition} · H:{c.high}° L:{c.low}°
+                {c.condition} · H:{convert(c.high)}° L:{convert(c.low)}°
               </span>
             </span>
           </button>

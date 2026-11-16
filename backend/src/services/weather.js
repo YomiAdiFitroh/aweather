@@ -189,9 +189,56 @@ async function getCities() {
         condition: r.condition,
         high: r.daily[0]?.max ?? r.temp,
         low: r.daily[0]?.min ?? r.temp,
+        humidity: r.humidity,
+        windKmh: r.windKmh,
+        rainChance: r.rainChance,
       };
     })
   );
 }
 
-module.exports = { CITIES, getDashboard, getCities };
+const SEVERITY_ORDER = { warning: 0, advisory: 1, info: 2 };
+
+// Alerts are derived from the same weather report the dashboard uses.
+function buildAlerts(city, r) {
+  const alerts = [];
+  const add = (severity, slug, title, message) =>
+    alerts.push({ id: `${city.toLowerCase()}-${slug}`, city, severity, title, message });
+
+  if (r.rainChance >= 60) {
+    add('warning', 'rain', 'Heavy rain likely', `${r.rainChance}% chance of rain today. Carry an umbrella and watch for local flooding.`);
+  }
+
+  const stormIndex = r.daily.slice(0, 3).findIndex((d) => d.condition === 'Stormy');
+  if (stormIndex !== -1) {
+    const when = r.daily[stormIndex].label.toLowerCase();
+    add(
+      stormIndex === 0 ? 'warning' : 'advisory',
+      'storm',
+      `Thunderstorms expected ${when}`,
+      'Avoid open areas during storms and unplug sensitive electronics.'
+    );
+  }
+
+  if (r.feelsLike >= 35) {
+    add('advisory', 'heat', 'Heat advisory', `It feels like ${r.feelsLike}°C. Stay hydrated and limit time in direct sun.`);
+  }
+  if (r.windKmh >= 30) {
+    add('advisory', 'wind', 'Strong winds', `Winds around ${r.windKmh} km/h. Secure loose outdoor items.`);
+  }
+  if (r.uvIndex != null && r.uvIndex >= 8) {
+    add('advisory', 'uv', 'High UV index', `UV index is ${r.uvIndex}. Use sunscreen and seek shade at midday.`);
+  }
+  if (r.humidity >= 85) {
+    add('info', 'humidity', 'Very humid', `Humidity is ${r.humidity}%. It may feel warmer than the temperature suggests.`);
+  }
+
+  return alerts;
+}
+
+async function getAlerts() {
+  const perCity = await Promise.all(CITIES.map(async (city) => buildAlerts(city, await getReport(city))));
+  return perCity.flat().sort((a, b) => SEVERITY_ORDER[a.severity] - SEVERITY_ORDER[b.severity]);
+}
+
+module.exports = { CITIES, getDashboard, getCities, getAlerts };
