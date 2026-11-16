@@ -97,7 +97,7 @@ If a refresh token that was already rotated is presented again, the API treats i
 ### 1. Clone
 
 ```bash
-git clone https://github.com/YOUR-USERNAME/aweather.git
+git clone https://github.com/YomiAdiFitroh/aweather.git
 cd aweather
 ```
 
